@@ -1,7 +1,5 @@
-package com.szabto.szorietlap.activities;
+package com.szabto.lazacetlapp.activities;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,12 +7,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.szabto.szorietlap.api.Api;
-import com.szabto.szorietlap.R;
-import com.szabto.szorietlap.helpers.SqliteHelper;
-import com.szabto.szorietlap.structures.item.ItemAdapter;
-import com.szabto.szorietlap.structures.item.ItemDataModel;
-import com.szabto.szorietlap.structures.ResponseHandler;
+import com.szabto.lazacetlapp.api.Api;
+import com.szabto.lazacetlapp.R;
+import com.szabto.lazacetlapp.helpers.SqliteHelper;
+import com.szabto.lazacetlapp.structures.item.ItemAdapter;
+import com.szabto.lazacetlapp.structures.item.ItemDataModel;
+import com.szabto.lazacetlapp.structures.ResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.szabto.szorietlap.firebase;
+package com.szabto.lazacetlapp.firebase;
 
 import android.util.Log;
 

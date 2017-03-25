@@ -11,12 +11,24 @@ public class MenuDataModel {
     Integer itemCount;
     Integer id;
 
-    public MenuDataModel( Integer id, String valid, String posted, Integer itemCount, Boolean isNew) {
+
+    boolean isHeader;
+
+    public MenuDataModel( Integer id, boolean isHeader, String valid, String posted, Integer itemCount, Boolean isNew) {
         this.id = id;
         this.valid = valid;
         this.isNew = isNew;
+        this.isHeader = isHeader;
         this.itemCount = itemCount;
         this.posted = posted;
+    }
+
+    public boolean isHeader() {
+        return isHeader;
+    }
+
+    public void setHeader(boolean header) {
+        isHeader = header;
     }
 
     public Integer getId() {

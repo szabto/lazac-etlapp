@@ -1,12 +1,10 @@
-package com.szabto.szorietlap.activities;
+package com.szabto.lazacetlapp.activities;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,15 +15,14 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.szabto.szorietlap.api.Api;
-import com.szabto.szorietlap.R;
-import com.szabto.szorietlap.helpers.SqliteHelper;
-import com.szabto.szorietlap.structures.menu.MenuAdapter;
-import com.szabto.szorietlap.structures.ResponseHandler;
-import com.szabto.szorietlap.structures.menu.MenuDataModel;
+import com.szabto.lazacetlapp.api.Api;
+import com.szabto.lazacetlapp.R;
+import com.szabto.lazacetlapp.helpers.SqliteHelper;
+import com.szabto.lazacetlapp.structures.menu.MenuAdapter;
+import com.szabto.lazacetlapp.structures.ResponseHandler;
+import com.szabto.lazacetlapp.structures.menu.MenuDataModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,14 +66,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        //setting  listener on scroll event of the list
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
+            public void onScrollStateChanged(AbsListView view, int scrollState) { }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -98,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
-
-
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -172,12 +162,21 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray arr = resp.getJSONArray("list");
                         Log.d(TAG, "Menu count: " + String.valueOf(arr.length()));
 
+                        int currentWeek = -1;
+
                         for(int i=0;i<arr.length();i++) {
                             JSONObject row = arr.getJSONObject(i);
 
+                            int week = row.getInt("week_num");
                             int id = row.getInt("id");
+                            String date = row.getString("date");
 
-                            dataModels.add(new MenuDataModel(id, row.getString("date"), row.getString("posted"), row.getInt("item_count"), !database.isViewedMenu(String.valueOf(id))));
+                            if( week != currentWeek ) {
+                                dataModels.add(new MenuDataModel(week, true, date.substring(0, 4), "", 0, false));
+                                currentWeek = week;
+                            }
+
+                            dataModels.add(new MenuDataModel(id, false, date, row.getString("posted"), row.getInt("item_count"), !database.isViewedMenu(String.valueOf(id))));
                         }
                         adapter.notifyDataSetChanged();
                     }

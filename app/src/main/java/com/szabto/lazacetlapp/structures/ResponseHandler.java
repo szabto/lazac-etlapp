@@ -1,4 +1,4 @@
-package com.szabto.szorietlap.structures;
+package com.szabto.lazacetlapp.structures;
 
 import org.json.JSONObject;
 

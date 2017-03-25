@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.szabto.szorietlap.activities.MainActivity">
+    tools:context="com.szabto.lazacetlapp.activities.MainActivity">
     <LinearLayout
         android:id="@+id/progressbar_view"
         android:layout_width="fill_parent"

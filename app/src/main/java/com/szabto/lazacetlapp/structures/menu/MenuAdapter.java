@@ -28,6 +28,8 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
         TextView txtValid;
         TextView txtPosted;
         TextView txtItemCount;
+        RelativeLayout wrapper;
+        TextView txtWeekNumber;
         RelativeLayout background;
     }
 
@@ -39,7 +41,6 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
 
     @Override
     public void onClick(View v) {
-
         int position=(Integer) v.getTag();
         Object object= getItem(position);
         MenuDataModel dataModel=(MenuDataModel)object;
@@ -49,9 +50,7 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the data item for this position
         MenuDataModel dataModel = getItem(position);
-        // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
         final View result;
@@ -66,6 +65,9 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
             viewHolder.txtValid = (TextView) convertView.findViewById(R.id.validity);
             viewHolder.background = (RelativeLayout) convertView.findViewById(R.id.layout_bg);
 
+            viewHolder.txtWeekNumber = (TextView)convertView.findViewById(R.id.week_number);
+            viewHolder.wrapper = (RelativeLayout)convertView.findViewById(R.id.data_layout);
+
             result=convertView;
 
             convertView.setTag(viewHolder);
@@ -76,20 +78,30 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
 
         lastPosition = position;
 
-        if( dataModel.getNew() ) {
-            viewHolder.txtPosted.setTypeface(null, Typeface.BOLD);
-            viewHolder.txtValid.setTypeface(null, Typeface.BOLD);
-            viewHolder.background.setBackgroundColor( convertView.getResources().getColor(R.color.unseenMenu) );
+        if( dataModel.isHeader() ) {
+            viewHolder.wrapper.setVisibility(View.GONE);
+            viewHolder.txtWeekNumber.setVisibility(View.VISIBLE);
+
+            viewHolder.txtWeekNumber.setText(dataModel.getValid() + " " + String.valueOf(dataModel.getId()) + ". hét");
         }
         else {
-            viewHolder.txtPosted.setTypeface(null, Typeface.NORMAL);
-            viewHolder.txtValid.setTypeface(null, Typeface.NORMAL);
-            viewHolder.background.setBackgroundColor( 0 );
-        }
+            viewHolder.wrapper.setVisibility(View.VISIBLE);
+            viewHolder.txtWeekNumber.setVisibility(View.GONE);
+            if( dataModel.getNew() ) {
+                viewHolder.txtPosted.setTypeface(null, Typeface.BOLD);
+                viewHolder.txtValid.setTypeface(null, Typeface.BOLD);
+                viewHolder.background.setBackgroundColor( convertView.getResources().getColor(R.color.unseenMenu) );
+            }
+            else {
+                viewHolder.txtPosted.setTypeface(null, Typeface.NORMAL);
+                viewHolder.txtValid.setTypeface(null, Typeface.NORMAL);
+                viewHolder.background.setBackgroundColor( 0 );
+            }
 
-        viewHolder.txtPosted.setText(dataModel.getPosted());
-        viewHolder.txtValid.setText(dataModel.getValid());
-        viewHolder.txtItemCount.setText(String.valueOf(dataModel.getItemCount()));
+            viewHolder.txtPosted.setText(dataModel.getPosted());
+            viewHolder.txtValid.setText(dataModel.getValid());
+            viewHolder.txtItemCount.setText(String.valueOf(dataModel.getItemCount()));
+        }
 
         return convertView;
     }

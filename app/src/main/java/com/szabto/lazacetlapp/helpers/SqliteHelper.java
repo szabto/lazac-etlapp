@@ -1,4 +1,4 @@
-package com.szabto.szorietlap.helpers;
+package com.szabto.lazacetlapp.helpers;
 
 import android.content.ContentValues;
 import android.content.Context;

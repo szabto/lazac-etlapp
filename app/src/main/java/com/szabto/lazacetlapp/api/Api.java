@@ -1,9 +1,9 @@
-package com.szabto.szorietlap.api;
+package com.szabto.lazacetlapp.api;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.szabto.szorietlap.structures.ResponseHandler;
+import com.szabto.lazacetlapp.structures.ResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;

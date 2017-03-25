@@ -1,4 +1,4 @@
-package com.szabto.szorietlap.api;
+package com.szabto.lazacetlapp.api;
 
 /**
  * Created by root on 3/11/17.
@@ -6,7 +6,6 @@ package com.szabto.szorietlap.api;
 
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
