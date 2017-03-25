@@ -1,4 +1,4 @@
-package com.szabto.szorietlap.structures.item;
+package com.szabto.lazacetlapp.structures.item;
 
 /**
  * Created by root on 3/24/17.

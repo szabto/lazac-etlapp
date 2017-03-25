@@ -1,4 +1,4 @@
-package com.szabto.szorietlap.structures.menu;
+package com.szabto.lazacetlapp.structures.menu;
 
 /**
  * Created by root on 3/24/17.
