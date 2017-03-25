@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#d66d1d</color>
+    <color name="colorPrimaryDark">#973703</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="borderColor">#ccc</color>
+    <color name="priceBackColor">#fafafa</color>
+    <color name="headerBackColor">#efefef</color>
+    <color name="unseenMenu">#fff6b6</color>
+</resources>

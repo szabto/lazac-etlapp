@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:text="\@ITEM_NAME\@"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/black"
+        android:padding="10dp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/price_high"
+            android:layout_width="55dp"
+            android:layout_height="20dp"
+            android:text="\?"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:background="@drawable/price_border"
+            />
+        <TextView
+            android:id="@+id/price_low"
+            android:layout_width="55dp"
+            android:layout_height="20dp"
+            android:text="\?"
+            android:textSize="10dp"
+            android:layout_below="@+id/price_high"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:background="@drawable/price_border"
+            />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/category_name"
+        android:text="\@CATEGORY_NAME\@"
+        android:textColor="@android:color/black"
+        android:background="@color/headerBackColor"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:visibility="gone"
+        />
+</RelativeLayout>
