@@ -27,6 +27,7 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
         TextView txtValid;
         TextView txtPosted;
         TextView txtItemCount;
+        TextView dayName;
         RelativeLayout wrapper;
         TextView txtWeekNumber;
         RelativeLayout background;
@@ -48,6 +49,14 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
     private int lastPosition = -1;
 
     @Override
+    public boolean isEnabled(int position) {
+        if(dataSet.get(position).isHeader())
+            return false;
+
+        return super.isEnabled(position);
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         MenuDataModel dataModel = getItem(position);
         ViewHolder viewHolder; // view lookup cache stored in tag
@@ -63,6 +72,8 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
             viewHolder.txtPosted = (TextView) convertView.findViewById(R.id.posted_at);
             viewHolder.txtValid = (TextView) convertView.findViewById(R.id.validity);
             viewHolder.background = (RelativeLayout) convertView.findViewById(R.id.layout_bg);
+
+            viewHolder.dayName = (TextView) convertView.findViewById(R.id.day_name);
 
             viewHolder.txtWeekNumber = (TextView)convertView.findViewById(R.id.week_number);
             viewHolder.wrapper = (RelativeLayout)convertView.findViewById(R.id.data_layout);
@@ -89,14 +100,13 @@ public class MenuAdapter extends ArrayAdapter<MenuDataModel> implements View.OnC
             if( dataModel.getNew() ) {
                 viewHolder.txtPosted.setTypeface(null, Typeface.BOLD);
                 viewHolder.txtValid.setTypeface(null, Typeface.BOLD);
-                viewHolder.background.setBackgroundColor( convertView.getResources().getColor(R.color.unseenMenu) );
             }
             else {
                 viewHolder.txtPosted.setTypeface(null, Typeface.NORMAL);
                 viewHolder.txtValid.setTypeface(null, Typeface.NORMAL);
-                viewHolder.background.setBackgroundColor( 0 );
             }
 
+            viewHolder.dayName.setText(dataModel.getDayName());
             viewHolder.txtPosted.setText(dataModel.getPosted());
             viewHolder.txtValid.setText(dataModel.getValid());
             viewHolder.txtItemCount.setText(String.valueOf(dataModel.getItemCount()));

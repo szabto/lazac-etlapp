@@ -11,22 +11,31 @@ public class MenuDataModel {
     Integer itemCount;
     Integer id;
 
+    String dayName;
 
     boolean isHeader;
 
-    public MenuDataModel( Integer id, boolean isHeader, String valid, String posted, Integer itemCount, Boolean isNew) {
+    public MenuDataModel( Integer id, boolean isHeader, String valid, String posted, Integer itemCount, String dayName, Boolean isNew) {
         this.id = id;
         this.valid = valid;
         this.isNew = isNew;
         this.isHeader = isHeader;
         this.itemCount = itemCount;
         this.posted = posted;
+        this.dayName = dayName;
+    }
+
+    public String getDayName() {
+        return dayName;
+    }
+
+    public void setDayName(String dayName) {
+        this.dayName = dayName;
     }
 
     public boolean isHeader() {
         return isHeader;
     }
-
     public void setHeader(boolean header) {
         isHeader = header;
     }

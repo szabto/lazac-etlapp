@@ -11,6 +11,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -59,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MenuDataModel dataModel= dataModels.get(position);
-
+                if( dataModel.isHeader() ) {
+                    return;
+                }
                 Intent intent = new Intent(act, MenuActivity.class);
                 intent.putExtra("menu_id", String.valueOf(dataModel.getId()));
                 startActivity(intent);
@@ -88,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -105,13 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        // Unregister since the activity is not visible
         LocalBroadcastManager.getInstance(this)
                 .unregisterReceiver(mMessageReceiver);
         super.onPause();
     }
 
-    // Handling the received Intents for the "my-integer" event
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -126,8 +128,6 @@ public class MainActivity extends AppCompatActivity {
         final SqliteHelper database = new SqliteHelper(this);
         super.onResume();
 
-
-        // This registers mMessageReceiver to receive messages.
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(mMessageReceiver,
                         new IntentFilter("menu-arrive"));
@@ -137,6 +137,32 @@ public class MainActivity extends AppCompatActivity {
             md.setNew(!database.isViewedMenu(String.valueOf(id)));
         }
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_about:
+                startActivity(new Intent(this, AboutAcitivity.class));
+                break;
+
+            /*case R.id.menu_item_place:
+                startActivity(new Intent(this, PlaceActivity.class));
+                break;*/
+
+            /*case R.id.menu_item_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;*/
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater mi = getMenuInflater();
+        mi.inflate(R.menu.list_menu, menu);
+        return true;
     }
 
     private void loadMenus(final boolean more) {
@@ -172,11 +198,11 @@ public class MainActivity extends AppCompatActivity {
                             String date = row.getString("date");
 
                             if( week != currentWeek ) {
-                                dataModels.add(new MenuDataModel(week, true, date.substring(0, 4), "", 0, false));
+                                dataModels.add(new MenuDataModel(week, true, date.substring(0, 4), "", 0, "", false));
                                 currentWeek = week;
                             }
 
-                            dataModels.add(new MenuDataModel(id, false, date, row.getString("posted"), row.getInt("item_count"), !database.isViewedMenu(String.valueOf(id))));
+                            dataModels.add(new MenuDataModel(id, false, date, row.getString("posted"), row.getInt("item_count"), row.getString("day_name"), !database.isViewedMenu(String.valueOf(id))));
                         }
                         adapter.notifyDataSetChanged();
                     }

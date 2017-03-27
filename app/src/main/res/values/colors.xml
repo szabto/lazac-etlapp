@@ -2,9 +2,10 @@
 <resources>
     <color name="colorPrimary">#d66d1d</color>
     <color name="colorPrimaryDark">#973703</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ffbf40</color>
     <color name="borderColor">#ccc</color>
     <color name="priceBackColor">#fafafa</color>
     <color name="headerBackColor">#efefef</color>
     <color name="unseenMenu">#fff6b6</color>
+    <color name="alternativeTextColor">#aaa</color>
 </resources>

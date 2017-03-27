@@ -1,6 +1,7 @@
 package com.szabto.lazacetlapp.activities;
 
 import android.app.ActionBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,7 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
 
         getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
 
         setTitle(getString(R.string.loading_menu));
 
@@ -47,7 +49,7 @@ public class MenuActivity extends AppCompatActivity {
             value = null;
 
         if( value == null ) {
-            Toast.makeText(this, getString(R.string.error_occurred), Toast.LENGTH_SHORT);
+            Snackbar.make(findViewById(R.id.main_listview), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).show();
             finish();
         }
 

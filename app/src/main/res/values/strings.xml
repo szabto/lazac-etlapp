@@ -3,4 +3,15 @@
     <string name="loading_menu">Menü betöltése...</string>
     <string name="error_occurred">Hiba történt</string>
     <string name="loading">Betöltés...</string>
+
+
+    <string name="settings">Beállítások</string>
+    <string name="place">Helyszín</string>
+    <string name="about">Névjegy</string>
+
+    <string name="title_activity_settings">Beállítások</string>
+    <string name="pref_header_notifications">Értesítések</string>
+    <string name="pref_title_new_menu_notification">Értesítés új étlap érkezésekor</string>
+
+    <string name="title_activity_place">Map</string>
 </resources>

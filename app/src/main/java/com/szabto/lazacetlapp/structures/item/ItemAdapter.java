@@ -1,10 +1,12 @@
 package com.szabto.lazacetlapp.structures.item;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.szabto.lazacetlapp.R;
@@ -27,6 +29,8 @@ public class ItemAdapter extends ArrayAdapter<ItemDataModel> implements View.OnC
         TextView txtPriceLow;
         TextView txtPriceHigh;
         TextView txtCategoryName;
+
+        RelativeLayout background;
     }
 
     public ItemAdapter(ArrayList<ItemDataModel> data, Context context) {
@@ -44,6 +48,13 @@ public class ItemAdapter extends ArrayAdapter<ItemDataModel> implements View.OnC
     }
 
     private int lastPosition = -1;
+
+    @Override
+    public boolean isEnabled(int position) {
+        ItemDataModel idm = dataSet.get(position);
+        if( idm.isCategory() ) return false;
+        return super.isEnabled(position);
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -65,6 +76,8 @@ public class ItemAdapter extends ArrayAdapter<ItemDataModel> implements View.OnC
             viewHolder.txtPriceLow = (TextView) convertView.findViewById(R.id.price_low);
             viewHolder.txtCategoryName = (TextView) convertView.findViewById(R.id.category_name);
 
+            viewHolder.background = (RelativeLayout) convertView.findViewById(R.id.menu_wrapper);
+
             result=convertView;
 
             convertView.setTag(viewHolder);
@@ -75,28 +88,26 @@ public class ItemAdapter extends ArrayAdapter<ItemDataModel> implements View.OnC
 
         lastPosition = position;
 
+        final float scale = getContext().getResources().getDisplayMetrics().density;
         if( dataModel.isCategory() ) {
-            viewHolder.txtPriceHigh.setVisibility(View.GONE);
-            viewHolder.txtPriceLow.setVisibility(View.GONE);
-            viewHolder.txtName.setVisibility(View.GONE);
+            viewHolder.background.setVisibility(View.GONE);
             viewHolder.txtCategoryName.setVisibility(View.VISIBLE);
 
             viewHolder.txtCategoryName.setText(dataModel.getName());
         }
         else {
-            viewHolder.txtPriceHigh.setVisibility(View.VISIBLE);
-            viewHolder.txtName.setVisibility(View.VISIBLE);
+            viewHolder.background.setVisibility(View.VISIBLE);
             viewHolder.txtCategoryName.setVisibility(View.GONE);
 
-            final float scale = getContext().getResources().getDisplayMetrics().density;
 
             if( dataModel.getPrice_low() == 0 ) {
                 viewHolder.txtPriceLow.setVisibility(View.GONE);
-                viewHolder.txtPriceHigh.getLayoutParams().height = (int) (40 * scale + 0.5f);
+                viewHolder.txtPriceHigh.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
             }
             else {
                 viewHolder.txtPriceLow.setVisibility(View.VISIBLE);
-                viewHolder.txtPriceHigh.getLayoutParams().height = (int) (20 * scale + 0.5f);
+                viewHolder.txtPriceHigh.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+                viewHolder.txtPriceLow.setGravity(Gravity.TOP | Gravity.RIGHT);
             }
 
             viewHolder.txtName.setText(dataModel.getName());
