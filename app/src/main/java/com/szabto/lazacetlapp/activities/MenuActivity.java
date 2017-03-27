@@ -1,7 +1,9 @@
 package com.szabto.lazacetlapp.activities;
 
+import android.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,7 +33,11 @@ public class MenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         setTitle(getString(R.string.loading_menu));
+
 
         Bundle b = getIntent().getExtras();
         final String value; // or other values
@@ -51,6 +57,18 @@ public class MenuActivity extends AppCompatActivity {
 
         listView.setAdapter(adapter);
         loadMenu(value);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void loadMenu(final String menuId ) {
