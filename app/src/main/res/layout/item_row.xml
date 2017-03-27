@@ -45,6 +45,15 @@
                 />
 
         </LinearLayout>
+        <!--<CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/check_box"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_toRightOf="@+id/check_box"
+            />-->
         <TextView
             android:id="@+id/item_name"
             android:layout_width="wrap_content"

@@ -1,11 +1,14 @@
 package com.szabto.lazacetlapp.activities;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,6 +19,7 @@ import com.szabto.lazacetlapp.helpers.SqliteHelper;
 import com.szabto.lazacetlapp.structures.item.ItemAdapter;
 import com.szabto.lazacetlapp.structures.item.ItemDataModel;
 import com.szabto.lazacetlapp.structures.ResponseHandler;
+import com.szabto.lazacetlapp.structures.menu.MenuDataModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +44,6 @@ public class MenuActivity extends AppCompatActivity {
 
         setTitle(getString(R.string.loading_menu));
 
-
         Bundle b = getIntent().getExtras();
         final String value; // or other values
         if(b != null)
@@ -55,7 +58,7 @@ public class MenuActivity extends AppCompatActivity {
 
         listView = (ListView)findViewById(R.id.item_listview);
         dataModels = new ArrayList<>();
-        adapter= new ItemAdapter(dataModels,getApplicationContext());
+        adapter = new ItemAdapter(dataModels,getApplicationContext());
 
         listView.setAdapter(adapter);
         loadMenu(value);
@@ -89,7 +92,7 @@ public class MenuActivity extends AppCompatActivity {
                 try {
                     String dt = resp.getString("date");
 
-                    setTitle(getString(R.string.app_name) + " / " + dt);
+                    setTitle(dt);
 
                     JSONArray data = resp.getJSONArray("data");
                     for( int i=0;i<data.length(); i++ ) {
