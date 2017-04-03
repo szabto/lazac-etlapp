@@ -1,6 +1,7 @@
 package com.szabto.lazacetlapp.activities;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +60,20 @@ public class MenuActivity extends AppCompatActivity {
         listView = (ListView)findViewById(R.id.item_listview);
         dataModels = new ArrayList<>();
         adapter = new ItemAdapter(dataModels,getApplicationContext());
+
+        final Activity act = this;
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ItemDataModel dataModel= dataModels.get(position);
+                if( dataModel.isCategory() ) {
+                    return;
+                }
+                Intent intent = new Intent(act, FoodActivity.class);
+                startActivity(intent);
+            }
+        });
 
         listView.setAdapter(adapter);
         loadMenu(value);

@@ -49,13 +49,17 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activities.AboutAcitivity"
+        <activity
+            android:name=".activities.AboutAcitivity"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
+        <activity
+            android:name=".activities.FoodActivity"
+            android:label="@string/title_activity_food"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
