@@ -1,39 +1,54 @@
 package com.szabto.lazacetlapp.activities;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.szabto.lazacetlapp.api.Api;
+import com.brandongogetap.stickyheaders.StickyLayoutManager;
+import com.github.pwittchen.reactivenetwork.library.Connectivity;
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.szabto.lazacetlapp.R;
+import com.szabto.lazacetlapp.api.DayResponse;
+import com.szabto.lazacetlapp.api.FoodCategory;
+import com.szabto.lazacetlapp.api.FoodItem;
+import com.szabto.lazacetlapp.api.HeaderItem;
+import com.szabto.lazacetlapp.api.MenuItem;
+import com.szabto.lazacetlapp.helpers.ApiHelper;
 import com.szabto.lazacetlapp.helpers.SqliteHelper;
+import com.szabto.lazacetlapp.helpers.Utils;
+import com.szabto.lazacetlapp.structures.ClickListener;
 import com.szabto.lazacetlapp.structures.item.ItemAdapter;
-import com.szabto.lazacetlapp.structures.item.ItemDataModel;
-import com.szabto.lazacetlapp.structures.ResponseHandler;
-import com.szabto.lazacetlapp.structures.menu.MenuDataModel;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MenuActivity extends AppCompatActivity {
     private static final String TAG = MenuActivity.class.toString();
 
-    ArrayList<ItemDataModel> dataModels;
-    ListView listView;
+    private ArrayList<Object> dataModels;
+    private RecyclerView listView;
     private static ItemAdapter adapter;
+
+    private Snackbar noNetworkIndicator = null;
+
+    private ApiHelper api = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,40 +58,64 @@ public class MenuActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
 
-        setTitle(getString(R.string.loading_menu));
-
         Bundle b = getIntent().getExtras();
         final String value; // or other values
-        if(b != null)
+        if (b != null)
             value = b.getString("menu_id");
         else
             value = null;
 
-        if( value == null ) {
+        setTitle(b.getString("date"));
+
+        if (value == null) {
             Snackbar.make(findViewById(R.id.main_listview), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).show();
             finish();
+            return;
         }
 
-        listView = (ListView)findViewById(R.id.item_listview);
+        api = new ApiHelper(this);
+
+        listView = (RecyclerView) findViewById(R.id.item_listview);
         dataModels = new ArrayList<>();
-        adapter = new ItemAdapter(dataModels,getApplicationContext());
+        adapter = new ItemAdapter(dataModels);
 
         final Activity act = this;
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        adapter.setItemClickListener(new ClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ItemDataModel dataModel= dataModels.get(position);
-                if( dataModel.isCategory() ) {
-                    return;
+            public void itemClicked(View view, int position) {
+                FoodItem dataModel = (FoodItem) dataModels.get(position);
+                if (dataModel != null) {
+                    Intent intent = new Intent(act, FoodActivity.class);
+                    startActivity(intent);
                 }
-                Intent intent = new Intent(act, FoodActivity.class);
-                startActivity(intent);
             }
         });
 
+        final StickyLayoutManager layoutManager = new StickyLayoutManager(this, adapter);
+
+        listView.setLayoutManager(layoutManager);
+
         listView.setAdapter(adapter);
+
+        ReactiveNetwork.observeNetworkConnectivity(this)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Connectivity>() {
+                    @Override public void call(Connectivity connectivity) {
+                        checkNetwork();
+                    }
+                });
+
+        checkNetwork();
         loadMenu(value);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        checkNetwork();
     }
 
     @Override
@@ -85,51 +124,68 @@ public class MenuActivity extends AppCompatActivity {
         this.finish();
     }
 
+    private void checkNetwork() {
+        if( !Utils.isNetworkAvailable(this) ) {
+            noNetworkIndicator = Snackbar.make(findViewById(R.id.activity_main_swipe_refresh_layout), R.string.no_network, Snackbar.LENGTH_INDEFINITE);
+            noNetworkIndicator.show();
+        }
+        else {
+            if( noNetworkIndicator != null ) {
+                noNetworkIndicator.dismiss();
+                noNetworkIndicator = null;
+            }
+        }
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
 
-    private void loadMenu(final String menuId ) {
+    private void loadMenu(final String menuId) {
         final SqliteHelper database = new SqliteHelper(this);
-        Api a = new Api();
-        a.getMenu(new ResponseHandler() {
+        final Activity _this = this;
+        api.getService().getDay(Integer.valueOf(menuId)).enqueue(new Callback<DayResponse>() {
             @Override
-            public void onComplete(JSONObject resp) {
-                dataModels.clear();
+            public void onResponse(Call<DayResponse> call, Response<DayResponse> response) {
+                DayResponse dr = response.body();
+                if (dr != null) {
+                    dataModels.clear();
+                    database.viewMenu(menuId);
 
-                database.viewMenu(menuId);
+                    LinearLayout pb = (LinearLayout) findViewById(R.id.progressbar_view);
+                    pb.setVisibility(View.GONE);
 
-                LinearLayout pb = (LinearLayout)findViewById(R.id.progressbar_view);
-                pb.setVisibility(View.GONE);
+                    try {
+                        for (FoodCategory cat : dr.getData()) {
+                            dataModels.add(new HeaderItem(cat.getName()));
 
-                try {
-                    String dt = resp.getString("date");
-
-                    setTitle(dt);
-
-                    JSONArray data = resp.getJSONArray("data");
-                    for( int i=0;i<data.length(); i++ ) {
-                        JSONObject row = data.getJSONObject(i);
-                        dataModels.add(new ItemDataModel(row.getString("name"), true, 0, 0));
-
-                        JSONArray items = row.getJSONArray("items");
-
-                        for( int a=0;a<items.length();a++) {
-                            JSONObject item = items.getJSONObject(a);
-
-                            dataModels.add(new ItemDataModel(item.getString("name"), false, item.getInt("price_high"), item.getInt("price_low")));
+                            for (FoodItem food : cat.getItems()) {
+                                dataModels.add(food);
+                            }
                         }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error occurred while loading menu", e);
                     }
+
                     adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-
-
             }
-        }, menuId);
+
+            @Override
+            public void onFailure(Call<DayResponse> call, Throwable t) {
+
+                Snackbar.make(findViewById(R.id.main_listview), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    checkNetwork();
+                    }
+                }).show();
+                Log.e(TAG, "Error", t);
+            }
+        });
     }
 
 }

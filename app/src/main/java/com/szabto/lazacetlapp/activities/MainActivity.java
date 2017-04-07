@@ -1,94 +1,112 @@
 package com.szabto.lazacetlapp.activities;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
+import com.brandongogetap.stickyheaders.StickyLayoutManager;
+import com.github.pwittchen.reactivenetwork.library.Connectivity;
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.szabto.lazacetlapp.api.Api;
 import com.szabto.lazacetlapp.R;
+import com.szabto.lazacetlapp.api.HeaderItem;
+import com.szabto.lazacetlapp.helpers.ApiHelper;
 import com.szabto.lazacetlapp.helpers.SqliteHelper;
+import com.szabto.lazacetlapp.api.MenusResponse;
+import com.szabto.lazacetlapp.helpers.Utils;
+import com.szabto.lazacetlapp.structures.ClickListener;
 import com.szabto.lazacetlapp.structures.menu.MenuAdapter;
-import com.szabto.lazacetlapp.structures.ResponseHandler;
-import com.szabto.lazacetlapp.structures.menu.MenuDataModel;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.szabto.lazacetlapp.api.MenuItem;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.toString();
 
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    ArrayList<MenuDataModel> dataModels;
-    ListView listView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ArrayList<Object> dataModels;
+    private RecyclerView listView;
     private static MenuAdapter adapter;
-    boolean isLoading = true;
-    int start = 0;
-    boolean hasMore = false;
+    private boolean isLoading = false;
+    private int start = 0;
+    private boolean hasMore = false;
+    private int currentWeek = -1;
+
+    private Snackbar noNetworkIndicator = null;
+
+    private ApiHelper api = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.api = new ApiHelper(this);
+
         FirebaseMessaging.getInstance().subscribeToTopic("newmenu");
 
-        listView = (ListView)findViewById(R.id.main_listview);
-        dataModels = new ArrayList<>();
-        adapter= new MenuAdapter(dataModels,getApplicationContext());
+        listView = (RecyclerView) findViewById(R.id.main_listview);
+        dataModels = new ArrayList<Object>();
+
+        adapter = new MenuAdapter(dataModels);
 
         final MainActivity act = this;
 
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        final StickyLayoutManager layoutManager = new StickyLayoutManager(this, adapter);
+
+        listView.setLayoutManager(layoutManager);
+
+        checkNetwork();
+
+        adapter.setItemClickListener(new ClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MenuDataModel dataModel= dataModels.get(position);
-                if( dataModel.isHeader() ) {
-                    return;
+            public void itemClicked(View view, int position) {
+                MenuItem dataModel = (MenuItem)dataModels.get(position);
+                if( dataModel != null ) {
+                    Intent intent = new Intent(act, MenuActivity.class);
+                    intent.putExtra("menu_id", String.valueOf(dataModel.getId()));
+                    intent.putExtra("date", dataModel.getDate());
+                    startActivity(intent);
                 }
-                Intent intent = new Intent(act, MenuActivity.class);
-                intent.putExtra("menu_id", String.valueOf(dataModel.getId()));
-                startActivity(intent);
             }
         });
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) { }
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (layoutManager.getChildCount() > 0) {
+                    int indexOfLastItemViewVisible = layoutManager.getChildCount() -1;
+                    View lastItemViewVisible = layoutManager.getChildAt(indexOfLastItemViewVisible);
+                    int adapterPosition = layoutManager.getPosition(lastItemViewVisible);
+                    boolean isLastItemVisible = (adapterPosition == adapter.getItemCount() -1);
 
-                //what is the bottom item that is visible
-                int lastInScreen = firstVisibleItem + visibleItemCount;
-
-                Log.d(TAG, String.valueOf(lastInScreen) + ":"+String.valueOf(totalItemCount));
-
-                if ((lastInScreen == totalItemCount) && !isLoading && hasMore) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                    isLoading = true;
-                    start = totalItemCount;
-
-                    loadMenus(true);
+                    if (isLastItemVisible && !isLoading && hasMore) {
+                        loadMenus(true);
+                    }
                 }
             }
         });
@@ -97,29 +115,32 @@ public class MainActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                start = 0;
-                hasMore = true;
                 loadMenus(false);
             }
         });
 
-        mSwipeRefreshLayout.setRefreshing(true);
+        ReactiveNetwork.observeNetworkConnectivity(this)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1<Connectivity>() {
+                @Override public void call(Connectivity connectivity) {
+                    checkNetwork();
+                }
+            });
+
         loadMenus(false);
     }
 
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this)
-                .unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onPause();
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            start = 0;
-            mSwipeRefreshLayout.setRefreshing(true);
-            loadMenus(false);
+        loadMenus(false);
         }
     };
 
@@ -128,19 +149,37 @@ public class MainActivity extends AppCompatActivity {
         final SqliteHelper database = new SqliteHelper(this);
         super.onResume();
 
+        checkNetwork();
+
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(mMessageReceiver,
                         new IntentFilter("menu-arrive"));
 
-        for(MenuDataModel md : dataModels ) {
-            int id = md.getId();
-            md.setNew(!database.isViewedMenu(String.valueOf(id)));
+        for (Object md : dataModels) {
+            if( md instanceof MenuItem ) {
+                MenuItem mi = (MenuItem)md;
+                int id = mi.getId();
+                //mi.setNew(!database.isViewedMenu(String.valueOf(id)));
+            }
         }
         adapter.notifyDataSetChanged();
     }
 
+    private void checkNetwork() {
+        if( !Utils.isNetworkAvailable(this) ) {
+            noNetworkIndicator = Snackbar.make(findViewById(R.id.activity_main_swipe_refresh_layout), R.string.no_network, Snackbar.LENGTH_INDEFINITE);
+            noNetworkIndicator.show();
+        }
+        else {
+            if( noNetworkIndicator != null ) {
+                noNetworkIndicator.dismiss();
+                noNetworkIndicator = null;
+            }
+        }
+    }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_about:
                 startActivity(new Intent(this, AboutAcitivity.class));
@@ -165,56 +204,62 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMenus(final boolean more) {
-        final Activity act = this;
+        if (isLoading) return;
+
+        mSwipeRefreshLayout.setRefreshing(true);
+        isLoading = true;
+        if (!more) {
+            start = 0;
+            currentWeek = -1;
+            hasMore = true;
+        }
+
         final SqliteHelper database = new SqliteHelper(this);
-        Api a = new Api();
-        a.getMenus(new ResponseHandler() {
+
+        api.getService().getMenuList(start).enqueue(new Callback<MenusResponse>() {
             @Override
-            public void onComplete(JSONObject resp) {
-                mSwipeRefreshLayout.setRefreshing(false);
-
-                if( !more )
-                    dataModels.clear();
-                isLoading = false;
-                if( resp == null ) {
-                    Snackbar.make(findViewById(R.id.main_listview), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).show();
-                    return;
-                }
+            public void onResponse(Call<MenusResponse> call, Response<MenusResponse> response) {
                 Log.d(TAG, "Loaded menus");
-                try {
-                    hasMore = resp.getBoolean("there_more");
-                    if( resp.getBoolean("success") ) {
-                        JSONArray arr = resp.getJSONArray("list");
-                        Log.d(TAG, "Menu count: " + String.valueOf(arr.length()));
 
-                        int currentWeek = -1;
+                if (!more)
+                    dataModels.clear();
 
-                        for(int i=0;i<arr.length();i++) {
-                            JSONObject row = arr.getJSONObject(i);
+                isLoading = false;
+                mSwipeRefreshLayout.setRefreshing(false);
+                MenusResponse mr = response.body();
 
-                            int week = row.getInt("week_num");
-                            int id = row.getInt("id");
-                            String date = row.getString("date");
+                hasMore = mr.isThere_more();
 
-                            if( week != currentWeek ) {
-                                dataModels.add(new MenuDataModel(week, true, date.substring(0, 4), "", 0, "", false));
-                                currentWeek = week;
-                            }
+                for (com.szabto.lazacetlapp.api.MenuItem m : mr.getList()) {
 
-                            dataModels.add(new MenuDataModel(id, false, date, row.getString("posted"), row.getInt("item_count"), row.getString("day_name"), !database.isViewedMenu(String.valueOf(id))));
-                        }
-                        adapter.notifyDataSetChanged();
+                    if (m.getWeekNum() != currentWeek)  {
+                        String date = m.getDate();
+                        date = date.substring(0, 4);
+                        dataModels.add(new HeaderItem(date + " - " + m.getWeekNum() + ". hét"));
+                        currentWeek = m.getWeekNum();
                     }
-                    else {
-                        Log.d(TAG, "Success: false");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
+                    dataModels.add(m);
                 }
-
-
+                start += mr.getList().size();
+                adapter.notifyDataSetChanged();
             }
-        }, start);
+
+            @Override
+            public void onFailure(Call<MenusResponse> call, Throwable t) {
+                isLoading = false;
+                hasMore = true;
+                mSwipeRefreshLayout.setRefreshing(false);
+                Snackbar.make(findViewById(R.id.main_listview), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    checkNetwork();
+                    }
+                }).show();
+                Log.e(TAG, "Error", t);
+            }
+        });
     }
 
 }

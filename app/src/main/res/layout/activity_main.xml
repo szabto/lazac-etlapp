@@ -8,14 +8,16 @@
     android:layout_height="match_parent"
     tools:context="com.szabto.lazacetlapp.activities.MainActivity">
 
-    <ListView
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        android:id="@+id/main_listview"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/main_listview"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
+    </FrameLayout>
 </android.support.v4.widget.SwipeRefreshLayout>
 
 

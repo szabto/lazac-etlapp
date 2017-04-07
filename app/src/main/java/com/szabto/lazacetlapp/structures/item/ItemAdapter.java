@@ -1,120 +1,122 @@
 package com.szabto.lazacetlapp.structures.item;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import com.brandongogetap.stickyheaders.exposed.StickyHeaderHandler;
 import com.szabto.lazacetlapp.R;
+import com.szabto.lazacetlapp.api.FoodItem;
+import com.szabto.lazacetlapp.api.HeaderItem;
+import com.szabto.lazacetlapp.api.MenuItem;
+import com.szabto.lazacetlapp.structures.ClickListener;
+import com.szabto.lazacetlapp.structures.HeaderViewHolder;
+import com.szabto.lazacetlapp.structures.menu.MenuViewHolder;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by root on 3/24/17.
  */
 
-public class ItemAdapter extends ArrayAdapter<ItemDataModel> implements View.OnClickListener{
-    private static final String TAG = ItemAdapter.class.getSimpleName();
+public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeaderHandler, ClickListener {
+    private List<Object> items;
+    private ClickListener clickListener = null;
 
-    private ArrayList<ItemDataModel> dataSet;
-    Context mContext;
+    private final int ITEM = 0, HEADER = 1;
 
-    // View lookup cache
-    private static class ViewHolder {
-        TextView txtName;
-        TextView txtPriceLow;
-        TextView txtPriceHigh;
-        TextView txtCategoryName;
-
-        RelativeLayout background;
-    }
-
-    public ItemAdapter(ArrayList<ItemDataModel> data, Context context) {
-        super(context, R.layout.menu_row, data);
-        this.dataSet = data;
-        this.mContext=context;
+    public ItemAdapter(List<Object> items) {
+        this.items = items;
     }
 
     @Override
-    public void onClick(View v) {
-
-        int position=(Integer) v.getTag();
-        Object object= getItem(position);
-        ItemDataModel dataModel=(ItemDataModel)object;
-    }
-
-    private int lastPosition = -1;
-
-    @Override
-    public boolean isEnabled(int position) {
-        ItemDataModel idm = dataSet.get(position);
-        if( idm.isCategory() ) return false;
-        return super.isEnabled(position);
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the data item for this position
-        ItemDataModel dataModel = getItem(position);
-        // Check if an existing view is being reused, otherwise inflate the view
-        ViewHolder viewHolder; // view lookup cache stored in tag
-
-        final View result;
-
-        if (convertView == null) {
-
-            viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.item_row, parent, false);
-
-            viewHolder.txtName = (TextView) convertView.findViewById(R.id.item_name);
-            viewHolder.txtPriceHigh = (TextView) convertView.findViewById(R.id.price_high);
-            viewHolder.txtPriceLow = (TextView) convertView.findViewById(R.id.price_low);
-            viewHolder.txtCategoryName = (TextView) convertView.findViewById(R.id.category_name);
-
-            viewHolder.background = (RelativeLayout) convertView.findViewById(R.id.menu_wrapper);
-
-            result=convertView;
-
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-            result=convertView;
+    public int getItemViewType(int position) {
+        if (items.get(position) instanceof FoodItem) {
+            return ITEM;
+        } else if (items.get(position) instanceof HeaderItem) {
+            return HEADER;
         }
+        return -1;
+    }
 
-        lastPosition = position;
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        final float scale = getContext().getResources().getDisplayMetrics().density;
-        if( dataModel.isCategory() ) {
-            viewHolder.background.setVisibility(View.GONE);
-            viewHolder.txtCategoryName.setVisibility(View.VISIBLE);
-
-            viewHolder.txtCategoryName.setText(dataModel.getName());
+        switch (viewType) {
+            case HEADER:
+                View v2 = inflater.inflate(R.layout.list_header, parent, false);
+                viewHolder = new HeaderViewHolder(v2);
+                break;
+            default:
+                View v1 = inflater.inflate(R.layout.item_row, parent, false);
+                viewHolder = new ItemViewHolder(v1);
+                ((ItemViewHolder)viewHolder).setClickListener(this);
+                break;
         }
-        else {
-            viewHolder.background.setVisibility(View.VISIBLE);
-            viewHolder.txtCategoryName.setVisibility(View.GONE);
+        return viewHolder;
+    }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case HEADER:
+                HeaderViewHolder vh1 = (HeaderViewHolder) holder;
+                configureHeaderViewHolder(vh1, position);
+                break;
+            default:
+                ItemViewHolder vh = (ItemViewHolder) holder;
+                configureMenuItemViewHolder(vh, position);
+                break;
+        }
+    }
 
-            if( dataModel.getPrice_low() == 0 ) {
-                viewHolder.txtPriceLow.setVisibility(View.GONE);
-                viewHolder.txtPriceHigh.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+    private void configureHeaderViewHolder(HeaderViewHolder hvh, int position) {
+        HeaderItem item = (HeaderItem) items.get(position);
+        if (item != null) {
+            hvh.getHeaderTextView().setText(item.getValue());
+        }
+    }
+
+    private void configureMenuItemViewHolder(ItemViewHolder mvh, int pos) {
+        FoodItem item = (FoodItem) items.get(pos);
+        if (item != null) {
+            mvh.getItemNameView().setText(item.getName());
+            mvh.getPriceHighView().setText(String.valueOf(item.getPriceHigh()));
+            if( item.getPriceLow() > 0 ) {
+                mvh.getPriceLowView().setText(String.valueOf(item.getPriceLow()));
+                mvh.getPriceLowView().setVisibility(View.VISIBLE);
+                mvh.getPriceLowView().setGravity(Gravity.TOP | Gravity.RIGHT);
+                mvh.getPriceHighView().setGravity(Gravity.BOTTOM | Gravity.RIGHT);
             }
             else {
-                viewHolder.txtPriceLow.setVisibility(View.VISIBLE);
-                viewHolder.txtPriceHigh.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
-                viewHolder.txtPriceLow.setGravity(Gravity.TOP | Gravity.RIGHT);
+                mvh.getPriceLowView().setVisibility(View.GONE);
+                mvh.getPriceHighView().setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
             }
-
-            viewHolder.txtName.setText(dataModel.getName());
-            viewHolder.txtPriceHigh.setText(String.valueOf(dataModel.getPrice_high()));
-            viewHolder.txtPriceLow.setText(String.valueOf(dataModel.getPrice_low()));
         }
+    }
 
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return this.items.size();
+    }
+
+    @Override
+    public List<?> getAdapterData() {
+        return this.items;
+    }
+
+    public void setItemClickListener(ClickListener lst) {
+        this.clickListener = lst;
+    }
+
+    @Override
+    public final void itemClicked(View view, int position) {
+        if( this.clickListener != null ) {
+            this.clickListener.itemClicked(view, position);
+        }
     }
 }
