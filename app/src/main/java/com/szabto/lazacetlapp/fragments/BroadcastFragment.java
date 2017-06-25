@@ -16,11 +16,8 @@ public class BroadcastFragment extends Fragment {
     private static final String TAG = Fragment.class.toString();
 
     private TextView messageView;
-    private OnFragmentInteractionListener mListener;
 
     private ApiHelper api;
-
-    FragmentNavigation mFragmentNavigation;
 
     public BroadcastFragment() {
     }
@@ -53,36 +50,5 @@ public class BroadcastFragment extends Fragment {
         messageView.setText(strtext);
 
         return view;
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof FragmentNavigation) {
-            mFragmentNavigation = (FragmentNavigation) context;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-
-    public interface FragmentNavigation {
-        public void pushFragment(Fragment fragment);
     }
 }

@@ -56,11 +56,8 @@ public class FavoritesFragment extends Fragment implements ItemFavoritedListener
     private ProgressBar progressBar;
 
     private boolean isLoading = false;
-    private OnFragmentInteractionListener mListener;
 
     private ApiHelper api;
-
-    FragmentNavigation mFragmentNavigation;
 
     public FavoritesFragment() {
     }
@@ -109,21 +106,6 @@ public class FavoritesFragment extends Fragment implements ItemFavoritedListener
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof FragmentNavigation) {
-            mFragmentNavigation = (FragmentNavigation) context;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onItemFavorited(View view, final int position) {
         final FavoriteItem item = (FavoriteItem) dataModels.get(position);
         if( item != null ) {
@@ -136,6 +118,7 @@ public class FavoritesFragment extends Fragment implements ItemFavoritedListener
                     item.setLoading(false);
                     dataModels.remove(item);
                     adapter.notifyItemRemoved(position);
+                    FavoriteHelper.getInstance().removeFromFavorites(item.getId());
                 }
 
                 @Override
@@ -146,17 +129,6 @@ public class FavoritesFragment extends Fragment implements ItemFavoritedListener
             });
         }
     }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-
-    public interface FragmentNavigation {
-        public void pushFragment(Fragment fragment);
-    }
-
 
     private void loadFavorites() {
         if (isLoading) return;

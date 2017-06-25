@@ -37,29 +37,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MenuFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MenuFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MenuFragment extends Fragment {
     private static final String TAG = MenuFragment.class.getSimpleName();
 
     private ArrayList<Object> dataModels;
     private RecyclerView listView;
     private ItemAdapter adapter;
-    private OnFragmentInteractionListener mListener;
 
     private RelativeLayout noMenuLayout;
     private LinearLayout progressBar;
 
     private View view;
     private ApiHelper api;
-
-    private MenuListFragment.FragmentNavigation mFragmentNavigation;
 
     public MenuFragment() {
     }
@@ -166,13 +155,6 @@ public class MenuFragment extends Fragment {
 
             @Override
             public void onFailure(Call<DayResponse> call, Throwable t) {
-                /*Snackbar.make(view.findViewById(getSnackBarParentId()), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    @Override
-                    public void onDismissed(Snackbar transientBottomBar, int event) {
-                        super.onDismissed(transientBottomBar, event);
-                        checkNetwork();
-                    }
-                }).show();*/
                 progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Error", t);
             }
@@ -188,13 +170,6 @@ public class MenuFragment extends Fragment {
 
             @Override
             public void onFailure(Call<DayResponse> call, Throwable t) {
-                /*Snackbar.make(view.findViewById(getSnackBarParentId()), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    @Override
-                    public void onDismissed(Snackbar transientBottomBar, int event) {
-                        super.onDismissed(transientBottomBar, event);
-                        checkNetwork();
-                    }
-                }).show();*/
                 progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Error", t);
             }
@@ -221,35 +196,5 @@ public class MenuFragment extends Fragment {
 
             adapter.notifyDataSetChanged();
         }
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MenuListFragment.FragmentNavigation) {
-            mFragmentNavigation = (MenuListFragment.FragmentNavigation) context;
-        }
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface FragmentNavigation {
-        public void pushFragment(Fragment fragment);
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }

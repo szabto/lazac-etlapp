@@ -30,15 +30,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MenuListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MenuListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MenuListFragment extends Fragment {
     private static final String TAG = Fragment.class.toString();
 
@@ -52,11 +43,8 @@ public class MenuListFragment extends Fragment {
     private int start = 0;
     private boolean hasMore = false;
     private int currentWeek = -1;
-    private OnFragmentInteractionListener mListener;
 
     private ApiHelper api;
-
-    FragmentNavigation mFragmentNavigation;
 
     public MenuListFragment() {
     }
@@ -125,38 +113,6 @@ public class MenuListFragment extends Fragment {
         return view;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof FragmentNavigation) {
-            mFragmentNavigation = (FragmentNavigation) context;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-
-    public interface FragmentNavigation {
-        public void pushFragment(Fragment fragment);
-    }
-
-
     private void loadMenus(final boolean more) {
         if (isLoading) return;
 
@@ -202,13 +158,6 @@ public class MenuListFragment extends Fragment {
             public void onFailure(Call<MenusResponse> call, Throwable t) {
                 isLoading = false;
                 hasMore = true;
-                /*Snackbar.make(findViewById(getSnackBarParentId()), getString(R.string.error_occurred), Snackbar.LENGTH_LONG).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    @Override
-                    public void onDismissed(Snackbar transientBottomBar, int event) {
-                        super.onDismissed(transientBottomBar, event);
-                        //checkNetwork();
-                    }
-                }).show();*/
                 Log.e(TAG, "Error", t);
                 progressBar.setVisibility(View.GONE);
             }
