@@ -8,4 +8,5 @@
     <color name="headerBackColor">#efefef</color>
     <color name="unseenMenu">#fff6b6</color>
     <color name="alternativeTextColor">#aaa</color>
+    <color name="starColorInactive">#666</color>
 </resources>

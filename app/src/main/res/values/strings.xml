@@ -16,5 +16,9 @@
 
     <string name="title_today_menu">Mai menü</string>
     <string name="title_menu_list">Menü lista</string>
+    <string name="title_favorites_list">Kedvencek</string>
     <string name="no_menu_for_today">A mai napra nincs menü</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

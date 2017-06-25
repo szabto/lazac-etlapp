@@ -20,11 +20,15 @@ import com.szabto.lazacetlapp.R;
 import com.szabto.lazacetlapp.activities.FoodActivity;
 import com.szabto.lazacetlapp.activities.MenuActivity;
 import com.szabto.lazacetlapp.api.responses.DayResponse;
+import com.szabto.lazacetlapp.api.responses.ResponseBase;
 import com.szabto.lazacetlapp.api.structures.FoodCategory;
 import com.szabto.lazacetlapp.api.structures.FoodItem;
 import com.szabto.lazacetlapp.api.structures.HeaderItem;
 import com.szabto.lazacetlapp.helpers.ApiHelper;
+import com.szabto.lazacetlapp.helpers.FavoriteHelper;
+import com.szabto.lazacetlapp.helpers.UUIDHelper;
 import com.szabto.lazacetlapp.structures.ClickListener;
+import com.szabto.lazacetlapp.structures.ItemFavoritedListener;
 import com.szabto.lazacetlapp.structures.item.ItemAdapter;
 
 import java.util.ArrayList;
@@ -84,6 +88,8 @@ public class MenuFragment extends Fragment {
 
         final Activity act = this.getActivity();
 
+        //TODO implement later
+        /*
         adapter.setItemClickListener(new ClickListener() {
             @Override
             public void itemClicked(View view, int position) {
@@ -93,6 +99,33 @@ public class MenuFragment extends Fragment {
                     intent.putExtra("food_id", dataModel.getId());
                     intent.putExtra("food_name", dataModel.getName());
                     startActivity(intent);
+                }
+            }
+        });*/
+
+        adapter.setItemFavoritedListener(new ItemFavoritedListener() {
+            @Override
+            public void onItemFavorited(View view, final int position) {
+                final FoodItem dataModel = (FoodItem) dataModels.get(position);
+                if( dataModel != null && !dataModel.getLoading() ) {
+                    final boolean state = !dataModel.getIsFavorite();
+                    dataModel.setLoading(true);
+                    adapter.notifyItemChanged(position);
+
+                    api.getService().setFavoriteState(dataModel.getId(), FavoriteHelper.getInstance().getUserToken(), state).enqueue(new Callback<ResponseBase>() {
+                        @Override
+                        public void onResponse(Call<ResponseBase> call, Response<ResponseBase> response) {
+                            dataModel.setIsFavorite(state);
+                            dataModel.setLoading(false);
+                            adapter.notifyItemChanged(position);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBase> call, Throwable t) {
+                            dataModel.setLoading(false);
+                            adapter.notifyItemChanged(position);
+                        }
+                    });
                 }
             }
         });

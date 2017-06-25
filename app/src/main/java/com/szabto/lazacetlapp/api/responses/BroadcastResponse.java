@@ -5,15 +5,15 @@ package com.szabto.lazacetlapp.api.responses;
  */
 
 public class BroadcastResponse extends ResponseBase {
-    private String message;
+    private String broadcastMessage;
     private boolean hasBroadcast;
 
-    public String getMessage() {
-        return message;
+    public String getBroadcastMessage() {
+        return broadcastMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setBroadcastMessage(String broadcastMessage) {
+        this.broadcastMessage = broadcastMessage;
     }
 
     public boolean isHasBroadcast() {

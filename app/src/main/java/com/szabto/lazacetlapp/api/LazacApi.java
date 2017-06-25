@@ -4,6 +4,10 @@ import com.szabto.lazacetlapp.api.responses.BroadcastResponse;
 import com.szabto.lazacetlapp.api.responses.DayResponse;
 import com.szabto.lazacetlapp.api.responses.FoodResponse;
 import com.szabto.lazacetlapp.api.responses.MenusResponse;
+import com.szabto.lazacetlapp.api.responses.ResponseBase;
+import com.szabto.lazacetlapp.api.structures.FavoriteItem;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -28,4 +32,10 @@ public interface LazacApi {
 
     @GET("/szori/?action=getbroadcast")
     Call<BroadcastResponse> getBroadcast();
+
+    @GET("/szori/?action=setfavoritestate")
+    Call<ResponseBase> setFavoriteState(@Query("id") int food_id, @Query("uid") String user_token, @Query("state") boolean state);
+
+    @GET("/szori/?action=getfavoritedfoods")
+    Call<List<FavoriteItem>> getFavoritedFoods(@Query("uid") String user_token);
 }

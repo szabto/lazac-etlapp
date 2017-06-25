@@ -13,6 +13,14 @@ public class LazacFireBaseService extends FirebaseInstanceIdService {
     private static final String TAG = LazacFireBaseService.class.toString();
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "Refreshed token: " + refreshedToken);
+    }
+
+    @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();

@@ -9,6 +9,15 @@ import java.util.List;
 public class FoodCategory {
     private String name;
     private List<FoodItem> items;
+    private boolean can_favorited;
+
+    public boolean getCanfavorited() {
+        return can_favorited;
+    }
+
+    public void setCanFavorited(boolean can_favorited) {
+        this.can_favorited = can_favorited;
+    }
 
     public String getName() {
         return name;

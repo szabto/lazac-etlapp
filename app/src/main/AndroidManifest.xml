@@ -16,8 +16,7 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/notification_icon" />
 
-        <activity android:name=".activities.MainActivity">
-        </activity>
+        <activity android:name=".activities.MainActivity"></activity>
         <activity
             android:name=".activities.MenuActivity"
             android:parentActivityName=".activities.MainActivity">
@@ -47,8 +46,7 @@
                 android:value=".activities.MenuActivity" />
         </activity>
 
-        <service
-            android:name=".firebase.LazacFireBaseService">
+        <service android:name=".firebase.LazacFireBaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -64,15 +62,13 @@
 
         <activity
             android:name=".activities.SplashScreenActivity"
-            android:theme="@style/SplashTheme"
-            >
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

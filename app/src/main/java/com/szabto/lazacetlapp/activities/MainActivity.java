@@ -28,6 +28,7 @@ import com.szabto.lazacetlapp.R;
 import com.szabto.lazacetlapp.api.structures.HeaderItem;
 import com.szabto.lazacetlapp.api.responses.MenusResponse;
 import com.szabto.lazacetlapp.fragments.BroadcastFragment;
+import com.szabto.lazacetlapp.fragments.FavoritesFragment;
 import com.szabto.lazacetlapp.fragments.MenuFragment;
 import com.szabto.lazacetlapp.fragments.MenuListFragment;
 import com.szabto.lazacetlapp.structures.ClickListener;
@@ -52,6 +53,7 @@ public class MainActivity extends NetworkActivity implements FragNavController.R
     private boolean hasBroadcast = false;
     private String broadcastMessage = "";
 
+    private final int INDEX_FAVORITES_LIST = FragNavController.TAB3;
     private final int INDEX_MENU_LIST = FragNavController.TAB2;
     private final int INDEX_TODAY_MENU = FragNavController.TAB1;
 
@@ -65,17 +67,18 @@ public class MainActivity extends NetworkActivity implements FragNavController.R
         bottomView = (BottomNavigationView) findViewById(R.id.navigation);
 
         builder = FragNavController.newBuilder(savedInstanceState, getSupportFragmentManager(), R.id.main_container);
-        builder.rootFragmentListener(this, 2);
+        builder.rootFragmentListener(this, 3);
 
         this.broadcastMessage = getIntent().getStringExtra("message");
         this.hasBroadcast = getIntent().getBooleanExtra("hasBroadcast", false);
 
-        List<Fragment> fragments = new ArrayList<>(2);
+        /*List<Fragment> fragments = new ArrayList<>(3);
 
         fragments.add(getMainFragment());
         fragments.add(MenuListFragment.newInstance());
+        fragments.add(FavoritesFragment.newInstance());
 
-        builder.rootFragments(fragments);
+        builder.rootFragments(fragments);*/
         mNavController = builder.build();
 
         bottomView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -87,6 +90,9 @@ public class MainActivity extends NetworkActivity implements FragNavController.R
                         return true;
                     case R.id.navigation_today_menu:
                         mNavController.switchTab(INDEX_TODAY_MENU);
+                        return true;
+                    case R.id.navigation_favorites:
+                        mNavController.switchTab(INDEX_FAVORITES_LIST);
                         return true;
 
                 }
@@ -103,26 +109,20 @@ public class MainActivity extends NetworkActivity implements FragNavController.R
             f.setArguments(bundle);
             return f;
         }
-        else return MenuFragment.newInstance();
+        else {
+            return MenuFragment.newInstance();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     @Override
     int getSnackBarParentId() {
         return R.id.main_container;
     }
-
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //loadMenus(false);
-        }
-    };
 
 
     @Override
@@ -137,9 +137,6 @@ public class MainActivity extends NetworkActivity implements FragNavController.R
     @Override
     protected void onResume() {
         super.onResume();
-
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(mMessageReceiver, new IntentFilter("menu-arrive"));
     }
 
     @Override
@@ -148,14 +145,6 @@ public class MainActivity extends NetworkActivity implements FragNavController.R
             case R.id.menu_item_about:
                 startActivity(new Intent(this, AboutAcitivity.class));
                 break;
-
-            /*case R.id.menu_item_place:
-                startActivity(new Intent(this, PlaceActivity.class));
-                break;*/
-
-            /*case R.id.menu_item_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                break;*/
         }
 
         return super.onOptionsItemSelected(item);
@@ -175,6 +164,8 @@ public class MainActivity extends NetworkActivity implements FragNavController.R
                 return MenuListFragment.newInstance();
             case INDEX_TODAY_MENU:
                 return getMainFragment();
+            case INDEX_FAVORITES_LIST:
+                return FavoritesFragment.newInstance();
         }
         throw new IllegalStateException("Need to send an index that we know");
     }

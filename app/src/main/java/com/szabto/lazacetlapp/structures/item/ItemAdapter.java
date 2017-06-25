@@ -11,6 +11,7 @@ import com.szabto.lazacetlapp.api.structures.FoodItem;
 import com.szabto.lazacetlapp.api.structures.HeaderItem;
 import com.szabto.lazacetlapp.structures.BaseAdapter;
 import com.szabto.lazacetlapp.structures.HeaderViewHolder;
+import com.szabto.lazacetlapp.structures.ItemFavoritedListener;
 
 import java.util.List;
 
@@ -18,8 +19,10 @@ import java.util.List;
  * Created by root on 3/24/17.
  */
 
-public class ItemAdapter extends BaseAdapter {
+public class ItemAdapter extends BaseAdapter implements ItemFavoritedListener {
     private final int ITEM = 0, HEADER = 1;
+
+    private ItemFavoritedListener itemFavoritedListener = null;
 
     public ItemAdapter(List<Object> items) {
         super(items);
@@ -33,6 +36,10 @@ public class ItemAdapter extends BaseAdapter {
             return HEADER;
         }
         return -1;
+    }
+
+    public void setItemFavoritedListener(ItemFavoritedListener listener) {
+        this.itemFavoritedListener = listener;
     }
 
     @Override
@@ -49,6 +56,7 @@ public class ItemAdapter extends BaseAdapter {
                 View v1 = inflater.inflate(R.layout.list_item_row, parent, false);
                 viewHolder = new ItemViewHolder(v1);
                 ((ItemViewHolder) viewHolder).setClickListener(this);
+                ((ItemViewHolder)viewHolder).setFavoritedListener(this);
                 break;
         }
         return viewHolder;
@@ -80,6 +88,22 @@ public class ItemAdapter extends BaseAdapter {
         if (item != null) {
             mvh.getItemNameView().setText(item.getName());
             mvh.getPriceHighView().setText(String.valueOf(item.getPriceHigh()));
+            if( item.getCanfavorited() ) {
+                mvh.getFavoriteHolderView().setVisibility(View.VISIBLE);
+                if( item.getLoading() ) {
+                    mvh.getLoadingProgressView().setVisibility(View.VISIBLE);
+                    mvh.getFavoriteButtonView().setVisibility(View.GONE);
+                }
+                else {
+                    mvh.getFavoriteButtonView().setChecked(item.getIsFavorite());
+
+                    mvh.getLoadingProgressView().setVisibility(View.GONE);
+                    mvh.getFavoriteButtonView().setVisibility(View.VISIBLE);
+                }
+            }
+            else {
+                mvh.getFavoriteHolderView().setVisibility(View.GONE);
+            }
             if (item.getPriceLow() > 0) {
                 mvh.getPriceLowView().setText(String.valueOf(item.getPriceLow()));
                 mvh.getPriceLowView().setVisibility(View.VISIBLE);
@@ -89,6 +113,13 @@ public class ItemAdapter extends BaseAdapter {
                 mvh.getPriceLowView().setVisibility(View.GONE);
                 mvh.getPriceHighView().setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
             }
+        }
+    }
+
+    @Override
+    public void onItemFavorited(View view, int position) {
+        if( this.itemFavoritedListener != null ) {
+            this.itemFavoritedListener.onItemFavorited(view, position);
         }
     }
 }

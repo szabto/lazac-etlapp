@@ -11,5 +11,8 @@
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/title_menu_list" />
 
-
+    <item
+        android:id="@+id/navigation_favorites"
+        android:icon="@drawable/star_20dp"
+        android:title="@string/title_favorites_list" />
 </menu>

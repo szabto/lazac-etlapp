@@ -2,13 +2,18 @@ package com.szabto.lazacetlapp.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.szabto.lazacetlapp.R;
 import com.szabto.lazacetlapp.api.responses.BroadcastResponse;
+import com.szabto.lazacetlapp.api.responses.ResponseBase;
+import com.szabto.lazacetlapp.api.structures.FavoriteItem;
+import com.szabto.lazacetlapp.helpers.FavoriteHelper;
+import com.szabto.lazacetlapp.helpers.UUIDHelper;
 
+import java.util.List;
 import java.util.TimerTask;
 
 import retrofit2.Call;
@@ -21,9 +26,27 @@ public class SplashScreenActivity extends NetworkActivity implements Callback<Br
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        FavoriteHelper.getInstance().setUserToken(UUIDHelper.id(this));
 
         ImageView mImageViewFilling = (ImageView) findViewById(R.id.imageview_animation_list_filling);
         ((AnimationDrawable) mImageViewFilling.getBackground()).start();
+
+        api.getService().getFavoritedFoods(FavoriteHelper.getInstance().getUserToken()).enqueue(new Callback<List<FavoriteItem>>() {
+            @Override
+            public void onResponse(Call<List<FavoriteItem>> call, Response<List<FavoriteItem>> response) {
+                List<FavoriteItem> resp = response.body();
+                if(resp != null ) {
+                    for(FavoriteItem i : resp) {
+                        FavoriteHelper.getInstance().addToFavorites(i.getId());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FavoriteItem>> call, Throwable t) {
+
+            }
+        });
 
         final SplashScreenActivity act = this;
         new Thread(new TimerTask() {
@@ -41,7 +64,7 @@ public class SplashScreenActivity extends NetworkActivity implements Callback<Br
 
     @Override
     int getSnackBarParentId() {
-        return 0;
+        return R.id.splash_root;
     }
 
     @Override
@@ -50,7 +73,7 @@ public class SplashScreenActivity extends NetworkActivity implements Callback<Br
 
         Intent i = new Intent(this, MainActivity.class);
         if( resp != null ) {
-            i.putExtra("message", resp.getMessage());
+            i.putExtra("message", resp.getBroadcastMessage());
             i.putExtra("hasBroadcast", resp.isHasBroadcast());
         }
         startActivity(i);
