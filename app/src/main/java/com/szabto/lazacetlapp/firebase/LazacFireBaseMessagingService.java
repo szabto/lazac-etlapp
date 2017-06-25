@@ -7,10 +7,10 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-public class MyFireBaseMessagingService extends FirebaseMessagingService {
-    private static final String TAG = MyFireBaseService.class.toString();
+public class LazacFireBaseMessagingService extends FirebaseMessagingService {
+    private static final String TAG = LazacFireBaseService.class.toString();
 
-    public MyFireBaseMessagingService() {
+    public LazacFireBaseMessagingService() {
     }
 
     @Override

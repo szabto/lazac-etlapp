@@ -6,14 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.brandongogetap.stickyheaders.exposed.StickyHeaderHandler;
 import com.szabto.lazacetlapp.R;
-import com.szabto.lazacetlapp.api.FoodItem;
-import com.szabto.lazacetlapp.api.HeaderItem;
-import com.szabto.lazacetlapp.api.MenuItem;
-import com.szabto.lazacetlapp.structures.ClickListener;
+import com.szabto.lazacetlapp.api.structures.FoodItem;
+import com.szabto.lazacetlapp.api.structures.HeaderItem;
+import com.szabto.lazacetlapp.structures.BaseAdapter;
 import com.szabto.lazacetlapp.structures.HeaderViewHolder;
-import com.szabto.lazacetlapp.structures.menu.MenuViewHolder;
 
 import java.util.List;
 
@@ -21,14 +18,11 @@ import java.util.List;
  * Created by root on 3/24/17.
  */
 
-public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeaderHandler, ClickListener {
-    private List<Object> items;
-    private ClickListener clickListener = null;
-
+public class ItemAdapter extends BaseAdapter {
     private final int ITEM = 0, HEADER = 1;
 
     public ItemAdapter(List<Object> items) {
-        this.items = items;
+        super(items);
     }
 
     @Override
@@ -52,9 +46,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 viewHolder = new HeaderViewHolder(v2);
                 break;
             default:
-                View v1 = inflater.inflate(R.layout.item_row, parent, false);
+                View v1 = inflater.inflate(R.layout.list_item_row, parent, false);
                 viewHolder = new ItemViewHolder(v1);
-                ((ItemViewHolder)viewHolder).setClickListener(this);
+                ((ItemViewHolder) viewHolder).setClickListener(this);
                 break;
         }
         return viewHolder;
@@ -86,37 +80,15 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (item != null) {
             mvh.getItemNameView().setText(item.getName());
             mvh.getPriceHighView().setText(String.valueOf(item.getPriceHigh()));
-            if( item.getPriceLow() > 0 ) {
+            if (item.getPriceLow() > 0) {
                 mvh.getPriceLowView().setText(String.valueOf(item.getPriceLow()));
                 mvh.getPriceLowView().setVisibility(View.VISIBLE);
                 mvh.getPriceLowView().setGravity(Gravity.TOP | Gravity.RIGHT);
                 mvh.getPriceHighView().setGravity(Gravity.BOTTOM | Gravity.RIGHT);
-            }
-            else {
+            } else {
                 mvh.getPriceLowView().setVisibility(View.GONE);
                 mvh.getPriceHighView().setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
             }
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return this.items.size();
-    }
-
-    @Override
-    public List<?> getAdapterData() {
-        return this.items;
-    }
-
-    public void setItemClickListener(ClickListener lst) {
-        this.clickListener = lst;
-    }
-
-    @Override
-    public final void itemClicked(View view, int position) {
-        if( this.clickListener != null ) {
-            this.clickListener.itemClicked(view, position);
         }
     }
 }

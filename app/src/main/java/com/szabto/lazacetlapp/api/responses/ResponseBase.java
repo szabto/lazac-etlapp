@@ -1,4 +1,4 @@
-package com.szabto.lazacetlapp.api;
+package com.szabto.lazacetlapp.api.responses;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.ArrayList;
  */
 
 public class ResponseBase {
+    private boolean success;
+
     public boolean isSuccess() {
         return success;
     }
@@ -15,6 +17,4 @@ public class ResponseBase {
     public void setSuccess(boolean success) {
         this.success = success;
     }
-
-    private boolean success;
 }

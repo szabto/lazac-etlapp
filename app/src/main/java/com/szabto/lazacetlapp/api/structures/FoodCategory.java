@@ -1,4 +1,4 @@
-package com.szabto.lazacetlapp.api;
+package com.szabto.lazacetlapp.api.structures;
 
 import java.util.List;
 
@@ -7,6 +7,9 @@ import java.util.List;
  */
 
 public class FoodCategory {
+    private String name;
+    private List<FoodItem> items;
+
     public String getName() {
         return name;
     }
@@ -22,7 +25,4 @@ public class FoodCategory {
     public void setItems(List<FoodItem> items) {
         this.items = items;
     }
-
-    private String name;
-    private List<FoodItem> items;
 }

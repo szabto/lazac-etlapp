@@ -9,8 +9,8 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
  * Created by root on 3/24/17.
  */
 
-public class MyFireBaseService extends FirebaseInstanceIdService {
-    private static final String TAG = MyFireBaseService.class.toString();
+public class LazacFireBaseService extends FirebaseInstanceIdService {
+    private static final String TAG = LazacFireBaseService.class.toString();
 
     @Override
     public void onTokenRefresh() {

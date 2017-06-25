@@ -7,48 +7,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.szabto.lazacetlapp.activities.MainActivity">
-    <LinearLayout
-        android:id="@+id/progressbar_view"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal" >
-
-            <ProgressBar
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:text="@string/loading" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#C0C0C0" />
-    </LinearLayout>
-
-    <FrameLayout
+    <fragment
+        android:name="com.szabto.lazacetlapp.fragments.MenuFragment"
+        android:id="@+id/activity_menu_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/item_listview"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
-    </FrameLayout>
+        android:layout_height="match_parent"
+        >
+
+    </fragment>
+
 </RelativeLayout>
 
 

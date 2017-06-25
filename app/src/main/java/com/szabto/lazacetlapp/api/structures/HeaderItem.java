@@ -1,4 +1,4 @@
-package com.szabto.lazacetlapp.api;
+package com.szabto.lazacetlapp.api.structures;
 
 import com.brandongogetap.stickyheaders.exposed.StickyHeader;
 
@@ -7,17 +7,17 @@ import com.brandongogetap.stickyheaders.exposed.StickyHeader;
  */
 
 public class HeaderItem implements StickyHeader {
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     private String value;
 
     public HeaderItem(String v) {
         this.value = v;
     }
+
+    public String getValue() {
+        return value;
+    }
+    public void setValue(String value) {
+        this.value = value;
+    }
+
 }

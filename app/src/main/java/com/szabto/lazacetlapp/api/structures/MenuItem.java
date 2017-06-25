@@ -1,10 +1,17 @@
-package com.szabto.lazacetlapp.api;
+package com.szabto.lazacetlapp.api.structures;
 
 /**
  * Created by kubu on 4/4/2017.
  */
 
 public class MenuItem {
+    private String day_name;
+    private int id;
+    private int week_num;
+    private String date;
+    private String posted;
+    private int item_count;
+
     public String getDayName() {
         return day_name;
     }
@@ -52,11 +59,4 @@ public class MenuItem {
     public void setItemCount(int item_count) {
         this.item_count = item_count;
     }
-
-    private String day_name;
-    private int id;
-    private int week_num;
-    private String date;
-    private String posted;
-    private int item_count;
 }

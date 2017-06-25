@@ -1,5 +1,7 @@
-package com.szabto.lazacetlapp.api;
+package com.szabto.lazacetlapp.api.responses;
 
+
+import com.szabto.lazacetlapp.api.structures.MenuItem;
 
 import java.util.List;
 
@@ -8,6 +10,9 @@ import java.util.List;
  */
 
 public class MenusResponse extends ResponseBase {
+    private boolean there_more;
+    private List<MenuItem> list;
+
     public List<MenuItem> getList() {
         return list;
     }
@@ -16,14 +21,11 @@ public class MenusResponse extends ResponseBase {
         this.list = list;
     }
 
-    public boolean isThere_more() {
+    public boolean isThereMore() {
         return there_more;
     }
 
-    public void setThere_more(boolean there_more) {
+    public void setThereMore(boolean there_more) {
         this.there_more = there_more;
     }
-
-    private boolean there_more;
-    private List<MenuItem> list;
 }

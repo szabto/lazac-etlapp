@@ -16,6 +16,7 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
     public HeaderViewHolder(View v) {
         super(v);
+
         headerTextView = (TextView) v.findViewById(R.id.header_text);
     }
 

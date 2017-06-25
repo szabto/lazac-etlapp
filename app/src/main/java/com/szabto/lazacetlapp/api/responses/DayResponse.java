@@ -1,4 +1,6 @@
-package com.szabto.lazacetlapp.api;
+package com.szabto.lazacetlapp.api.responses;
+
+import com.szabto.lazacetlapp.api.structures.FoodCategory;
 
 import java.util.List;
 
@@ -8,6 +10,7 @@ import java.util.List;
 
 public class DayResponse extends ResponseBase {
     private String date;
+    private List<FoodCategory> data;
 
     public String getDate() {
         return date;
@@ -24,6 +27,4 @@ public class DayResponse extends ResponseBase {
     public void setData(List<FoodCategory> data) {
         this.data = data;
     }
-
-    private List<FoodCategory> data;
 }
