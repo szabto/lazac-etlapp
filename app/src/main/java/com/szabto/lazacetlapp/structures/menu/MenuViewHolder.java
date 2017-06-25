@@ -1,5 +1,6 @@
 package com.szabto.lazacetlapp.structures.menu;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -16,17 +17,19 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private TextView validityView;
     private TextView postedAtView;
     private TextView itemCountView;
+    private CardView backgroundView;
 
     private ClickListener clicklistener = null;
 
     public MenuViewHolder(View itemView) {
         super(itemView);
 
-        itemView.setOnClickListener(this);
         dayNameView = (TextView) itemView.findViewById(R.id.day_name);
         validityView = (TextView) itemView.findViewById(R.id.validity);
         postedAtView = (TextView) itemView.findViewById(R.id.posted_at);
         itemCountView = (TextView) itemView.findViewById(R.id.item_count);
+        backgroundView = (CardView) itemView.findViewById(R.id.menu_card);
+        backgroundView.setOnClickListener(this);
     }
 
     @Override

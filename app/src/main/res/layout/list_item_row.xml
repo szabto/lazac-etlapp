@@ -1,93 +1,109 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true"
     android:paddingLeft="5dp"
-    android:paddingRight="5dp">
+    android:paddingRight="5dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/price_high"
-            android:layout_width="55dp"
-            android:layout_height="0dp"
-            android:layout_weight=".5"
-            android:text="\?"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:gravity="right|bottom"
-            android:paddingBottom="2dp"
-            android:paddingTop="2dp"
-            android:paddingRight="10dp"
-            />
-        <TextView
-            android:id="@+id/price_low"
-            android:layout_width="55dp"
-            android:layout_height="0dp"
-            android:layout_weight=".5"
-            android:text="\?"
-            android:textSize="10dp"
-            android:layout_below="@+id/price_high"
-            android:textColor="@android:color/black"
-            android:gravity="right|top"
-            android:paddingBottom="2dp"
-            android:paddingTop="2dp"
-            android:paddingRight="10dp"
-            />
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardElevation="2dp"
+        card_view:cardUseCompatPadding="true">
         <RelativeLayout
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_toRightOf="@+id/item_name"
-            android:gravity="center_vertical"
-            android:layout_centerVertical="true"
-            android:id="@+id/favorite_holder"
-            android:layout_gravity="center_vertical">
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:id="@+id/fav_pb"
-                android:visibility="gone"/>
-            <ToggleButton
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:id="@+id/fav_button"
-                android:background="@drawable/star_20dp"
-                android:layout_centerInParent="true"
-                android:text=""
-                android:textOn="@null"
-                android:textOff="@null"
-                android:textSize="0dp"
-                />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/price_high"
+                    android:layout_width="55dp"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"
+                    android:text="\?"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="right|bottom"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="10dp"
+                    />
+                <TextView
+                    android:id="@+id/price_low"
+                    android:layout_width="55dp"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"
+                    android:text="\?"
+                    android:textSize="10dp"
+                    android:layout_below="@+id/price_high"
+                    android:textColor="@android:color/black"
+                    android:gravity="right|top"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="10dp"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_toRightOf="@+id/item_name"
+                    android:gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/favorite_holder"
+                    android:layout_gravity="center_vertical">
+                    <ProgressBar
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:id="@+id/fav_pb"
+                        android:visibility="gone"/>
+                    <ToggleButton
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:id="@+id/fav_button"
+                        android:background="@drawable/star_20dp"
+                        android:layout_centerInParent="true"
+                        android:text=""
+                        android:textOn="@null"
+                        android:textOff="@null"
+                        android:textSize="0dp"
+                        />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:gravity="center_vertical"
+                    android:text="\@ITEM_NAME\@"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/black"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp" />
+            </LinearLayout>
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/item_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:gravity="center_vertical"
-            android:text="\@ITEM_NAME\@"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/black"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp" />
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>
