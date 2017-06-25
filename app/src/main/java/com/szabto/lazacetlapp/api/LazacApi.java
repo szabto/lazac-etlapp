@@ -38,7 +38,4 @@ public interface LazacApi {
 
     @GET("/szori/?action=getfavoritedfoods")
     Call<List<FavoriteItem>> getFavoritedFoods(@Query("uid") String user_token);
-
-    @GET("/szori/?action=registeruuid")
-    Call<ResponseBase> registerUUID(@Query("uuid") String uuid, @Query("firebase_id") String firebase_id);
 }
