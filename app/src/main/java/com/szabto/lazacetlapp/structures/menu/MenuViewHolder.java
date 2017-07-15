@@ -16,7 +16,6 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private TextView dayNameView;
     private TextView validityView;
     private TextView postedAtView;
-    private TextView itemCountView;
     private CardView backgroundView;
 
     private ClickListener clicklistener = null;
@@ -27,7 +26,6 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         dayNameView = (TextView) itemView.findViewById(R.id.day_name);
         validityView = (TextView) itemView.findViewById(R.id.validity);
         postedAtView = (TextView) itemView.findViewById(R.id.posted_at);
-        itemCountView = (TextView) itemView.findViewById(R.id.item_count);
         backgroundView = (CardView) itemView.findViewById(R.id.menu_card);
         backgroundView.setOnClickListener(this);
     }
@@ -65,13 +63,5 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     public void setPostedAtView(TextView postedAtView) {
         this.postedAtView = postedAtView;
-    }
-
-    public TextView getItemCountView() {
-        return itemCountView;
-    }
-
-    public void setItemCountView(TextView itemCountView) {
-        this.itemCountView = itemCountView;
     }
 }

@@ -78,8 +78,7 @@ public class MenuAdapter extends BaseAdapter {
         MenuItem item = (MenuItem) items.get(pos);
         if (item != null) {
             mvh.getDayNameView().setText(item.getDayName());
-            mvh.getItemCountView().setText(String.valueOf(item.getItemCount()));
-            mvh.getPostedAtView().setText(item.getDate());
+            mvh.getPostedAtView().setText(item.getPosted());
             mvh.getValidityView().setText(item.getDate());
         }
     }
