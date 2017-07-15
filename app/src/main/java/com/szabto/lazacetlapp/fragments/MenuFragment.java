@@ -78,7 +78,7 @@ public class MenuFragment extends Fragment {
         final Activity act = this.getActivity();
 
         //TODO implement later
-        /*
+
         adapter.setItemClickListener(new ClickListener() {
             @Override
             public void itemClicked(View view, int position) {
@@ -90,7 +90,7 @@ public class MenuFragment extends Fragment {
                     startActivity(intent);
                 }
             }
-        });*/
+        });
 
         adapter.setItemFavoritedListener(new ItemFavoritedListener() {
             @Override

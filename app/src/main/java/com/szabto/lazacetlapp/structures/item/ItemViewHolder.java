@@ -1,5 +1,6 @@
 package com.szabto.lazacetlapp.structures.item;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +25,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private ToggleButton favoriteButton;
     private ProgressBar loadingProgressView;
     private RelativeLayout favoriteHolderView;
+    private CardView backgroud;
 
     private ClickListener clicklistener = null;
     private ItemFavoritedListener favoritedListener = null;
@@ -31,13 +33,16 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     public ItemViewHolder(View itemView) {
         super(itemView);
 
-        itemView.setOnClickListener(this);
+        backgroud = (CardView) itemView.findViewById(R.id.view_list_item);
         priceHighView = (TextView) itemView.findViewById(R.id.price_high);
         priceLowView = (TextView) itemView.findViewById(R.id.price_low);
         itemNameView = (TextView) itemView.findViewById(R.id.item_name);
         favoriteButton = (ToggleButton) itemView.findViewById(R.id.fav_button);
         loadingProgressView = (ProgressBar) itemView.findViewById(R.id.fav_pb);
         favoriteHolderView = (RelativeLayout) itemView.findViewById(R.id.favorite_holder);
+
+
+        backgroud.setOnClickListener(this);
 
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
