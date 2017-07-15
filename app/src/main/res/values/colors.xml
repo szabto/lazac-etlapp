@@ -10,4 +10,5 @@
     <color name="unseenMenu">#fff6b6</color>
     <color name="alternativeTextColor">#aaa</color>
     <color name="starColorInactive">#666</color>
+    <color name="noImageBackground">#808080</color>
 </resources>
