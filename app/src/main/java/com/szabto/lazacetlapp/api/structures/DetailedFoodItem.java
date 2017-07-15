@@ -45,44 +45,6 @@ public class DetailedFoodItem {
         this.prices = prices;
     }
 
-    public FoodStatisticWrapper getStatistic() {
-        return statistic;
-    }
-
-    public void setStatistic(FoodStatisticWrapper statistic) {
-        this.statistic = statistic;
-    }
-
-    public class FoodStatisticWrapper {
-        private List<String> occurenceDates;
-        private int occurrence;
-        private int served_count;
-
-        public int getServedCount() {
-            return served_count;
-        }
-
-        public void setServedCount(int served_count) {
-            this.served_count = served_count;
-        }
-
-        public List<String> getOccurenceDates() {
-            return occurenceDates;
-        }
-
-        public void setOccurenceDates(List<String> occurenceDates) {
-            this.occurenceDates = occurenceDates;
-        }
-
-        public int getOccurrence() {
-            return occurrence;
-        }
-
-        public void setOccurrence(int occurrence) {
-            this.occurrence = occurrence;
-        }
-    }
-
     public class PriceWrapper {
         private int high_min;
         private int high_max;
